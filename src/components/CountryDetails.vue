@@ -1,4 +1,9 @@
 <script>
+
+/*import useCountryStore from '../store/CountryStore';
+
+useCountryStore();*/
+
 export default {
   props: {
 
