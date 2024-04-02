@@ -1,56 +1,55 @@
-<script>
+<script setup>
+import { storeToRefs } from "pinia";
+import { onMounted, watch } from "vue";
+import { useCountryStore } from "../store/CountryStore";
+import { useRoute } from "vue-router";
 
-/*import useCountryStore from '../store/CountryStore';
+const countryStore = useCountryStore();
+const { countrySelected } = storeToRefs(countryStore);
+const route = useRoute();
 
-useCountryStore();*/
+onMounted(async () => {
+  countryStore.searchSelectedCountry(route.params.alpha3Code);
+});
 
-export default {
-  props: {
-
+watch(
+  () => route.params.alpha3Code,
+  async (a3Code) => {
+    countryStore.searchSelectedCountry(a3Code);
   }
-}
+);
 </script>
 
 <template>
-<!-- Country Details (Bootstrap column) -->
-<div class="col-7">
-            <img src="https://restcountries.eu/data/fra.svg" alt="country flag" style="width: 300px"/>
-            <h1>France</h1>
-            <div>
-              <h1>Country: {{ $route.params.alpha3Code}}</h1>
-            </div>
-            <table class="table">
-              <thead></thead>
-              <tbody>
-                <tr>
-                  <td style="width: 30%">Capital</td>
-                  <td>Paris</td>
-                </tr>
-                <tr>
-                  <td>Area</td>
-                  <td>
-                    551695 km <sup>2</sup>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Borders</td>
-                  <td>
-                    <ul>
-                      <li><a href="/AND">Andorra</a></li>
-                      <li><a href="/BEL">Belgium</a></li>
-                      <li><a href="/DEU">Germany</a></li>
-                      <li><a href="/ITA">Italy</a></li>
-                      <li><a href="/MCO">Monaco</a></li>
-                      <li><a href="/ESP">Spain</a></li>
-                      <li><a href="/CHE">Switzerland</a></li>
-                    </ul>  
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+  <!-- Country Details (Bootstrap column) -->
+  <div class="col-7" v-if="countrySelected">
+    <img :src="countrySelected.flag" alt="country flag" style="width: 100px" />
+    <h1>{{ countrySelected.name }}</h1>
+    <table class="table">
+      <thead></thead>
+      <tbody>
+        <tr>
+          <td style="width: 30%">Capital</td>
+          <td>{{ countrySelected.capital }}</td>
+        </tr>
+        <tr>
+          <td>Area</td>
+          <td>{{ countrySelected.area }} km <sup>2</sup></td>
+        </tr>
+        <tr v-if="countrySelected.borders.length">
+          <td>Borders</td>
+          <td>
+            <ul>
+              <li v-for="border in countrySelected.borders" :key="border.alpha3Code">
+                <RouterLink :to="`/${border.alpha3Code}`">{{ border.name }}</RouterLink>
+              </li>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
 </template>
 
-<style>
-
-</style>
+<style></style>

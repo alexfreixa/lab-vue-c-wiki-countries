@@ -7,7 +7,7 @@ const routes = [
     component: () => import("../components/CountriesList.vue"),
     children: [
       {
-        path: "/list/:alpha3Code",
+        path: "/:alpha3Code",
         name: "list",
         component: () => import("../components/CountryDetails.vue"),
       },

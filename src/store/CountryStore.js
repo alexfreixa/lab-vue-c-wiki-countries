@@ -1,19 +1,32 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { getAllCountries } from '../assets/api.js';
 
 export const useCountryStore = defineStore('country', () => {
     const countriesList = ref([]);
+    const countryCodeSelected = ref('')
+
+    const countrySelected = computed(() => {
+      return countriesList.value.find(country => country.alpha3Code === countryCodeSelected.value);
+    })
 
     async function fetchCountries(){
         countriesList.value = await getAllCountries();
     }
 
+    function searchSelectedCountry(alpha3Code) {
+      countryCodeSelected.value = alpha3Code;
+    }
+
     return {
         //State
         countriesList,
+        countryCodeSelected,
+        //Get
+        countrySelected,
         //Actions
-        fetchCountries
+        fetchCountries,
+        searchSelectedCountry,
     }
 
 });
